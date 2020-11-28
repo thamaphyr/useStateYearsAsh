@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <title>Destructuring</title>
+  </head>
+
+  <body>
+    <main class="profile">
+      <div class="wrapper">
+        <button id="btn-age" class="button">Cuantos años tiene Ash?</button>
+        <div class="profile-content" id="user"></div>
+      </div>
+    </main>
+    <script>
+      const user = {
+        name: "Ash",
+        lastName: "Ketchum",
+        avatar: "./images/ash.jpg",
+        bio:
+          "Tengo 10 años y mi sueño es convertime en maestro pokemon. Actualmente viajo con Pikachu y Go.",
+        city: "Pueblo Paleta",
+        social: [150, 160, 130, 255],
+      };
+
+      const MyReact = (function () {
+        let _val;
+        return {
+          render(Component, props) {
+            const Comp = Component(props);
+            Comp.render();
+            return Comp;
+          },
+          useState(initialVariable) {
+            _val = _val || initialVariable;
+            function setState(newVal) {
+              _val = newVal;
+            }
+            return [_val, setState];
+          },
+        };
+      })();
+
+      // function useState(initialState) {
+      //   let state = initialState;
+
+      //   function getState() {
+      //     return state;
+      //   }
+      //   const setState = (newState) => {
+      //     state = newState;
+      //   };
+
+      //   return [getState, setState];
+      // }
+
+      function User({ name, lastName, avatar, city, bio: bio_, social }) {
+        const [twitter, facebook, instagram, tiktok] = social;
+        const [age, setAge] = MyReact.useState(10);
+
+        const render = () => {
+          const bio = bio_.replace("10", age);
+          return `
+              <div class="user">
+                <img src="${avatar}" alt="${name}" width="140" height="140">
+                <div class="details">
+                  <p>${name} ${lastName} - ${age} años</p>
+                </div>
+                <p class="city"><em>${city}</em></p>
+                <div class="social">
+                  <p>
+                    ${twitter}
+                  </p>
+                  <p>
+                    ${facebook}
+                  </p>
+                  <p>
+                    ${instagram}
+                  </p>
+                  <p>
+                    ${tiktok}
+                  </p>
+                </div>
+                <div class="bio">
+                  <p>${bio}</p>
+                </div>
+              </div>
+            `;
+        };
+        return { render, click: (newAge) => setAge(newAge) };
+      }
+      let Ash = MyReact.render(User, user);
+
+      window.user.innerHTML = Ash.render();
+
+      window.onload = () =>
+        (window["btn-age"].onclick = () => {
+          let newAge = prompt("Cuantos Crees que tiene?");
+          Ash.click(newAge);
+          Ash = MyReact.render(User, user);
+          window.user.innerHTML = Ash.render();
+        });
+    </script>
+  </body>
+</html>
